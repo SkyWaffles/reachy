@@ -1,0 +1,5 @@
+# VSCode files
+.VSCode
+
+# Jupyter Nodebook files
+*.ipynb
