@@ -12,18 +12,22 @@ https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot m
     command: ssh pi@192.168.0.2
     pw: reachy
     ```
-1. Running a Python script with Reachy:
+1. Running a Python script with real Reachy:
     ```bash
     cd zed-opencv-native/python/
     python3 zed_opencv_native.py "15618"
     ```
-1. Running a Jupyter Notebok with Reachy:
+1. Running a Jupyter Notebok with real Reachy:
     ```bash
     # starting the Jupyter server
     $ jupyter notebook --ip 0.0.0.0
     # IP with token to access notebook from local machine without using VNC
     http://192.168.0.2:8888/?token=<very long token generated from server startup>
     ```
+
+# Using Reachy Simulator
+Online Simulator at (only seems to work sometimes?): https://pollen-robotics.github.io/reachy-simulator/
+Offline Simulator with Unity (Github): https://github.com/pollen-robotics/reachy-unity-package
 
 ## Arm Positions
 ```python
