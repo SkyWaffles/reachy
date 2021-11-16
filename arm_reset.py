@@ -4,20 +4,34 @@ from scipy.spatial.transform import Rotation as R
 import time
 import math
 
-def start_reachy():
-    # initialize Reachy
-    return Reachy(
-        right_arm=parts.RightArm(
-            io='/dev/ttyUSB*',
-            hand='force_gripper',
-        ),
-        left_arm=parts.LeftArm(
-        io='/dev/ttyUSB*',
-        hand='force_gripper')
-    )
-reachy = start_reachy()
-LEFT_ARM = reachy.left_arm
-RIGHT_ARM = reachy.right_arm
+class RobotMode:
+    REAL = 'real'
+    SIM = 'sim'
+
+def start_reachy(mode):
+    if mode == RobotMode.REAL:
+        try:
+            # initialize real hardware
+            return Reachy(
+                right_arm=parts.RightArm(
+                    io='/dev/ttyUSB*',
+                    hand='force_gripper',
+                ),
+                left_arm=parts.LeftArm(
+                io='/dev/ttyUSB*',
+                hand='force_gripper')
+            )
+        except ValueError:
+            print("No real robot hooked up, using robot simulator")
+    else:
+        return Reachy(
+            right_arm=parts.RightArm(io='ws', hand='force_gripper'),
+            left_arm=parts.LeftArm(io='ws', hand='force_gripper'),
+        )
+
+robot = start_reachy(RobotMode.SIM)
+LEFT_ARM = robot.left_arm
+RIGHT_ARM = robot.right_arm
 
 def stiffen(arm):
     for m in arm.motors:
@@ -58,20 +72,41 @@ class MovePartTo:
         self._start_position = self._part.present_position
         self._end_position = end_position if end_position else get_origin_position(self._part)
 
+    def already_in_position(self, target, tolerance=0.01) -> bool:
+        return math.isclose(self._part.present_position, target, abs_tol=tolerance)
+
     def calculate_total_duration(self):
         return round(abs(self._end_position - self._start_position)/self.speed)
     
+    def move(self, target):
+        if self.already_in_position(target):
+            print(f"{self._part} already is already at {target}")
+            return
+
+        duration = self.calculate_total_duration()
+        self._part.compliant = False
+        print(f"moving {self._part} to {target}")
+        self._part.goto(
+            goal_position=target,  # in degrees
+            duration=duration,  # in seconds
+            wait=True
+        )
+    
     def execute(self):
-        if not math.isclose(self._part.present_position, self._end_position, abs_tol=0.01):
-            # move only if arm part is not already in position
-            duration = self.calculate_total_duration()
-            self._part.compliant = False
-            print(f"moving {self._part}")
-            self._part.goto(
-                goal_position=self._end_position,  # in degrees
-                duration=duration,  # in seconds
-                wait=True
-            )
+        target = self._end_position
+        if self.already_in_position(target):
+            print(f"{self._part} already is already at {target}")
+            return
+
+        # move only if arm part is not already in position
+        duration = self.calculate_total_duration()
+        self._part.compliant = False
+        print(f"moving {self._part} to {target}")
+        self._part.goto(
+            goal_position=target,  # in degrees
+            duration=duration,  # in seconds
+            wait=True
+        )
     
     def undo(self):
         if not math.isclose(self._part.present_position, self._start_position, abs_tol=0.01):
@@ -110,9 +145,9 @@ def execute_reset(arm, in_reverse=False):
 
 
 
-current_position = [m.present_position for m in reachy.right_arm.motors]
+current_position = [m.present_position for m in robot.right_arm.motors]
 print(current_position)
-print(reachy.right_arm.forward_kinematics(joints_position=current_position))
+print(robot.right_arm.forward_kinematics(joints_position=current_position))
 
 
 
