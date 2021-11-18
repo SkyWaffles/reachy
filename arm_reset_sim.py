@@ -124,7 +124,7 @@ def start_reachy(mode):
         # move into same starting position as hardware
         move_to_origin(robot.left_arm)
         move_to_origin(robot.right_arm)
-        return robot
+    return robot
 
 
 if __name__=="__main__":
