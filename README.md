@@ -26,8 +26,10 @@ https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot m
     ```
 
 # Using Reachy Simulator
-Online Simulator at (only seems to work sometimes?): https://pollen-robotics.github.io/reachy-simulator/
+Online Simulator: https://pollen-robotics.github.io/reachy-simulator/
 Offline Simulator with Unity (Github): https://github.com/pollen-robotics/reachy-unity-package
+
+When using the Online Simulator, you have to first start up the simulator call in your code, then hit the "Connect" button in the online Sim (Webgl) window.
 
 ## Arm Positions
 ```python
