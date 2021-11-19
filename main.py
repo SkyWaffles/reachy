@@ -584,16 +584,12 @@ class Resolution:
     height = 720
 
 
-def main():
+def main(args):
     global color_buffer
     global current_button
     global circle_coordinates
     global distance_to_button
     global reachy_moving
-
-    if len(sys.argv) == 1:
-        print('Please provide ZED serial number')
-        exit(1)
 
     # Open the ZED camera
     cap = cv2.VideoCapture(0)
@@ -608,10 +604,13 @@ def main():
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, image_size.width * 2)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, image_size.height)
 
-    serial_number = int(sys.argv[1])
-    calibration_file = download_calibration_file(serial_number)
-    if calibration_file == "":
-        exit(1)
+    calibration_file = args.camera_config_path
+    if args.camera_config_path is None:
+        serial_number = args.camera_id
+        calibration_file = download_calibration_file(serial_number)
+        if calibration_file == "":
+            print("No camera calibration file found. Exiting.")
+            exit(1)
     print("Calibration file found. Loading...")
 
     camera_matrix_left, camera_matrix_right, map_left_x, map_left_y, map_right_x, map_right_y = init_calibration(
@@ -822,9 +821,36 @@ def main():
 
 
 if __name__ == "__main__":
+    cli_commands = {
+        'robot_mode': {
+            'default': RobotMode.REAL,
+            'type': str,
+            'help': "Mode to run the robot in. Options: 'SIM' for simulator and 'REAL' for real hardware."
+        },
+        'camera_id': {
+            'default': '15618',
+            'type': int,
+            'help': 'Camera serial number.'
+        },
+        'camera_config_path': {
+            'default': './SN15618.conf',
+            'type': str,
+            'help': 'Path to camera config file if manually supplying one.'
+        },
+    }
+    parser = argparse.ArgumentParser(description='Input for Reachy with Zed camera.')
+    for command, values in cli_commands.items():
+        parser.add_argument(
+            f"--{command}",
+            default=values['default'],
+            type=values['type'],
+            help=values['help']
+        )
+    args = parser.parse_args()
+
     connect_websocket()
     stiffen(arm='left')
     stiffen(arm='right')
     relax(arm='left')
     relax(arm='right')
-    main()
+    main(args)
