@@ -671,8 +671,8 @@ def main(args, robot):
             # Line thickness of 2 px
             thickness = 2
 
-            board_min_y = 90
-            board_max_y = 150
+            board_min_y = args.board_edge_bottom
+            board_max_y = args.board_edge_top
             arm_min_y = 0
             arm_max_y = 90
             y = 173
@@ -834,6 +834,16 @@ if __name__ == "__main__":
             'default': './SN15618.conf',
             'type': str,
             'help': 'Path to camera config file if manually supplying one.'
+        },
+        'board_edge_top': {
+            'default': 200,
+            'type': int,
+            'help': '(Max Y-value): Pixel value  of the top edge of the board face with the orange circles.'
+        },
+        'board_edge_bottom': {
+            'default': 90,
+            'type': int,
+            'help': '(Min Y-value): Pixel value of the bottom edge of the board face with the orange circles.'
         },
     }
     parser = argparse.ArgumentParser(description='Input for Reachy with Zed camera.')
