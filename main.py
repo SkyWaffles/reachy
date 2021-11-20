@@ -191,15 +191,8 @@ class RobotMode:
     SIM = 'sim'
 
 # initialize Reachy as reachy
-reachy = Reachy(
-    right_arm=parts.RightArm(
-        io='/dev/ttyUSB*',
-        hand='force_gripper',
-    ),
-    left_arm=parts.LeftArm(
-    io='/dev/ttyUSB*',
-    hand='force_gripper')
-)
+reachy = None
+
 
 def relax(arm):
     assert arm == 'left' or arm == 'right'
