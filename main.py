@@ -74,7 +74,6 @@ grid_sticker_angles = [
 ]
 
 current_mode = 'play'  # 'play' or 'build'
-reachy_moving = False
 song_playing = False
 current_genre = ''
 current_group = 'button_a'
