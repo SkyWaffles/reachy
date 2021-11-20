@@ -614,17 +614,17 @@ def main(args):
         calibration_file, image_size)
     i = 0
     while True:
-        # check queue
-        if not reachy_moving and current_mode == 'play' and len(reachy_play_song_queue) > 0:
-            reachy_moving = True
-            next_item = reachy_play_song_queue.pop(0)
-            print('playing next song in queue: ' + next_item + ', remaining queue items: ' + ', '.join(reachy_play_song_queue))
-            Thread(target=play_song, args=(next_item,)).start()
-        elif not reachy_moving and current_mode == 'build' and len(reachy_build_song_queue) > 0:
-            reachy_moving = True
-            next_item = reachy_build_song_queue.pop(0)
-            print('pressing button in queue: ' + next_item + ', remaining queue items: ' + ', '.join(reachy_build_song_queue))
-            Thread(target=select_pattern, args=([next_item],)).start()
+        # # check queue
+        # if not reachy_moving and current_mode == 'play' and len(reachy_play_song_queue) > 0:
+        #     reachy_moving = True
+        #     next_item = reachy_play_song_queue.pop(0)
+        #     print('playing next song in queue: ' + next_item + ', remaining queue items: ' + ', '.join(reachy_play_song_queue))
+        #     Thread(target=play_song, args=(next_item,)).start()
+        # elif not reachy_moving and current_mode == 'build' and len(reachy_build_song_queue) > 0:
+        #     reachy_moving = True
+        #     next_item = reachy_build_song_queue.pop(0)
+        #     print('pressing button in queue: ' + next_item + ', remaining queue items: ' + ', '.join(reachy_build_song_queue))
+        #     Thread(target=select_pattern, args=([next_item],)).start()
 
         # Get a new frame from camera
         retval, frame = cap.read()
