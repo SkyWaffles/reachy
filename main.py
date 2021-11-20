@@ -27,10 +27,12 @@
 
 import numpy as np
 import os
+import argparse
 import configparser
 import sys
 import cv2
 import wget
+from math import sin, cos, radians, pi
 import websocket
 import json
 import threading
@@ -849,8 +851,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     connect_websocket()
-    stiffen(arm='left')
-    stiffen(arm='right')
+    main(args)
     relax(arm='left')
     relax(arm='right')
     main(args)
