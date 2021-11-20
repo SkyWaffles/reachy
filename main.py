@@ -672,7 +672,7 @@ def main(args, robot):
             thickness = 2
 
             board_min_y = 90
-            board_max_y = 200
+            board_max_y = 150
             arm_min_y = 0
             arm_max_y = 90
             y = 173
