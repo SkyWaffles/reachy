@@ -186,16 +186,10 @@ maschine_button_distances = {  # button ID -> approximate distance in pixels fro
     "SAMPLE_4": 46,
 }
 
-# initialize Reachy as reachy
-reachy = Reachy(
-    right_arm=parts.RightArm(
-        io='/dev/ttyUSB*',
-        hand='force_gripper',
-    ),
-    left_arm=parts.LeftArm(
-    io='/dev/ttyUSB*',
-    hand='force_gripper')
-)
+class RobotMode:
+    REAL = 'real'
+    SIM = 'sim'
+
 
 
 def relax(arm):
