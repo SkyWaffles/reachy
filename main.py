@@ -834,6 +834,13 @@ if __name__ == "__main__":
             'type': str,
             'help': "Mode to run the robot in. Options: 'SIM' for simulator and 'REAL' for real hardware."
         },
+        'camera_mode': {
+            'default': RobotMode.SIM,
+            'type': str,
+            'help': "Mode to run the camera in. Options: Use 'SIM' when no camera is available " \
+                "(which currently just ignorse camera part of code, but might add in preloaded stream someday)" \
+                "and 'REAL' for when real camera is available."
+        },
         'camera_id': {
             'default': '15618',
             'type': int,
