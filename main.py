@@ -868,4 +868,4 @@ if __name__ == "__main__":
     stiffen(arm='right')
     relax(arm='left')
     relax(arm='right')
-    main(args)
+    main(args, reachy)
