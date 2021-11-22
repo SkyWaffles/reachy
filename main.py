@@ -634,195 +634,196 @@ def main(args, robot):
                 print('pressing button in queue: ' + next_item + ', remaining queue items: ' + ', '.join(reachy_build_song_queue))
                 Thread(target=select_pattern, args=([next_item],)).start()
 
-        # region camera handling and computer vision
-        # Get a new frame from camera
-        retval, frame = cap.read()
-        # Extract left and right images from side-by-side
-        left_right_image = np.split(frame, 2, axis=1)
-        if camera_upside_down:
-            left_image_raw = cv2.flip(left_right_image[0], -1)
-            right_image_raw = cv2.flip(left_right_image[1], -1)
-        else:
-            left_image_raw = left_right_image[0]
-            right_image_raw = left_right_image[1]
+        if args.camera_mode == RobotMode.REAL:
+            # region camera handling and computer vision
+            # Get a new frame from camera
+            retval, frame = cap.read()
+            # Extract left and right images from side-by-side
+            left_right_image = np.split(frame, 2, axis=1)
+            if camera_upside_down:
+                left_image_raw = cv2.flip(left_right_image[0], -1)
+                right_image_raw = cv2.flip(left_right_image[1], -1)
+            else:
+                left_image_raw = left_right_image[0]
+                right_image_raw = left_right_image[1]
 
-        # Display images
-        cv2.imshow("left RAW", left_image_raw)
-        cv2.imshow("right RAW", right_image_raw)
+            # Display images
+            cv2.imshow("left RAW", left_image_raw)
+            cv2.imshow("right RAW", right_image_raw)
 
-        if rectify:
-            left_rect = cv2.remap(left_image_raw, map_left_x, map_left_y, interpolation=cv2.INTER_LINEAR)
-            right_rect = cv2.remap(right_image_raw, map_right_x, map_right_y, interpolation=cv2.INTER_LINEAR)
+            if rectify:
+                left_rect = cv2.remap(left_image_raw, map_left_x, map_left_y, interpolation=cv2.INTER_LINEAR)
+                right_rect = cv2.remap(right_image_raw, map_right_x, map_right_y, interpolation=cv2.INTER_LINEAR)
 
-            cv2.imshow("left RECT", left_rect)
-            cv2.imshow("right RECT", right_rect)
+                cv2.imshow("left RECT", left_rect)
+                cv2.imshow("right RECT", right_rect)
 
-            if capture_files and i > 90:
-                cv2.imwrite('left_raw2.jpg', left_image_raw)
-                cv2.imwrite('right_raw2.jpg', right_image_raw)
-                cv2.imwrite('left_rect2.jpg', left_rect)
-                cv2.imwrite('right_rect2.jpg', right_rect)
-                break
+                if capture_files and i > 90:
+                    cv2.imwrite('left_raw2.jpg', left_image_raw)
+                    cv2.imwrite('right_raw2.jpg', right_image_raw)
+                    cv2.imwrite('left_rect2.jpg', left_rect)
+                    cv2.imwrite('right_rect2.jpg', right_rect)
+                    break
 
-        if find_circles:
-            image = left_image_raw
-            # font
-            font = cv2.FONT_HERSHEY_SIMPLEX
+            if find_circles:
+                image = left_image_raw
+                # font
+                font = cv2.FONT_HERSHEY_SIMPLEX
 
-            # fontScale
-            fontScale = 1
+                # fontScale
+                fontScale = 1
 
-            # Blue color in BGR
-            color = (255, 0, 0)
-            color_arm = (0, 0, 255)
+                # Blue color in BGR
+                color = (255, 0, 0)
+                color_arm = (0, 0, 255)
 
-            # Line thickness of 2 px
-            thickness = 2
+                # Line thickness of 2 px
+                thickness = 2
 
-            board_min_y = args.board_edge_bottom
-            board_max_y = args.board_edge_top
-            arm_min_y = 0
-            arm_max_y = 90
-            y = 173
-            x = 0
-            h = 200
-            w = 670
-            lower_red = np.array([1, 200, 70])
-            upper_red = np.array([15, 255, 175])
-            image = image[y:y + h, x:x + w]
+                board_min_y = args.board_edge_bottom
+                board_max_y = args.board_edge_top
+                arm_min_y = 0
+                arm_max_y = 90
+                y = 173
+                x = 0
+                h = 200
+                w = 670
+                lower_red = np.array([1, 200, 70])
+                upper_red = np.array([15, 255, 175])
+                image = image[y:y + h, x:x + w]
 
-            import heapq
+                import heapq
 
-            def closest_points(list_of_tuples, x_value, n=9):
-                return heapq.nsmallest(n, list_of_tuples, lambda pnt: abs(pnt[0] - x_value))
+                def closest_points(list_of_tuples, x_value, n=9):
+                    return heapq.nsmallest(n, list_of_tuples, lambda pnt: abs(pnt[0] - x_value))
 
-            output = image.copy()
+                output = image.copy()
 
-            # RGB
-            # bottom = [5, 20, 76]
-            # upper = [21, 60, 167]
+                # RGB
+                # bottom = [5, 20, 76]
+                # upper = [21, 60, 167]
 
-            # HSV
-            bottom = [2, 207, 80]
-            upper = [9, 243, 166]
+                # HSV
+                bottom = [2, 207, 80]
+                upper = [9, 243, 166]
 
-            bottom = [max(bottom[0] - color_buffer, 0), max(bottom[1] - color_buffer, 0),
-                      max(bottom[2] - color_buffer, 0)]
-            upper = [min(upper[0] + color_buffer, 179), min(upper[1] + color_buffer, 255),
-                     min(upper[2] + color_buffer, 255)]
-            # print(bottom)
-            # print(upper)
+                bottom = [max(bottom[0] - color_buffer, 0), max(bottom[1] - color_buffer, 0),
+                        max(bottom[2] - color_buffer, 0)]
+                upper = [min(upper[0] + color_buffer, 179), min(upper[1] + color_buffer, 255),
+                        min(upper[2] + color_buffer, 255)]
+                # print(bottom)
+                # print(upper)
 
-            hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
-            mask_red = cv2.inRange(hsv, np.array(bottom), np.array(upper))
-            res_red = cv2.bitwise_and(image, image, mask=mask_red)
-            gray_masked = cv2.cvtColor(res_red, cv2.COLOR_BGR2GRAY)
-            cv2.imshow('res_red', res_red)
-            cv2.imshow('gray_masked', gray_masked)
-            # cv2.waitKey(0)
+                hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+                mask_red = cv2.inRange(hsv, np.array(bottom), np.array(upper))
+                res_red = cv2.bitwise_and(image, image, mask=mask_red)
+                gray_masked = cv2.cvtColor(res_red, cv2.COLOR_BGR2GRAY)
+                cv2.imshow('res_red', res_red)
+                cv2.imshow('gray_masked', gray_masked)
+                # cv2.waitKey(0)
 
-            # detect circles in the image
-            circles = cv2.HoughCircles(gray_masked, cv2.HOUGH_GRADIENT,
-                                       minDist=33,
-                                       dp=1.1,
-                                       param1=130,
-                                       param2=8,
-                                       minRadius=4,
-                                       maxRadius=12)
-            # ensure at least some circles were found
-            if circles is not None:
-                # convert the (x, y) coordinates and radius of the circles to integers
-                circles = np.round(circles[0, :]).astype("int")
-                board_circles = [(x, y, r) for (x, y, r) in circles if board_min_y <= y <= board_max_y]
-                board_circles = closest_points(list_of_tuples=board_circles, x_value=278, n=9)
-                board_circles = sorted(
-                    [(i[0], i[1], i[2]) for i in board_circles if board_min_y <= i[1] <= board_max_y],
-                    key=lambda l: l[0])
-                # loop over the (x, y) coordinates and radius of the circles
-                i = 1
-                if len(board_circles) == 9:
-                    for (x, y, r) in board_circles:
+                # detect circles in the image
+                circles = cv2.HoughCircles(gray_masked, cv2.HOUGH_GRADIENT,
+                                        minDist=33,
+                                        dp=1.1,
+                                        param1=130,
+                                        param2=8,
+                                        minRadius=4,
+                                        maxRadius=12)
+                # ensure at least some circles were found
+                if circles is not None:
+                    # convert the (x, y) coordinates and radius of the circles to integers
+                    circles = np.round(circles[0, :]).astype("int")
+                    board_circles = [(x, y, r) for (x, y, r) in circles if board_min_y <= y <= board_max_y]
+                    board_circles = closest_points(list_of_tuples=board_circles, x_value=278, n=9)
+                    board_circles = sorted(
+                        [(i[0], i[1], i[2]) for i in board_circles if board_min_y <= i[1] <= board_max_y],
+                        key=lambda l: l[0])
+                    # loop over the (x, y) coordinates and radius of the circles
+                    i = 1
+                    if len(board_circles) == 9:
+                        for (x, y, r) in board_circles:
+                            # draw the circle in the output image, then draw a rectangle
+                            # corresponding to the center of the circle
+                            cv2.circle(output, (x, y), r, (0, 255, 0), 4)
+                            cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
+                            # print(str(x) + ',' + str(y) + ': ' + str(image[y,x]))
+                            cv2.putText(output, str(i), (x - 10, y + 40), font, fontScale, color, thickness, cv2.LINE_AA)
+                            circle_coordinates[i] = (x,y)
+                            # x1, y1 = point_pos(x0=x, y0=y, d=100, theta=grid_sticker_angles[i - 1] + 90)
+                            # cv2.line(output, (x, y), (x1, y1), 255, 2)
+                            i += 1
+                    current_button_str = maschine_buttons[current_button]
+                    column_num = maschine_button_columns[current_button_str]
+                    origin_coordinates = circle_coordinates[column_num]
+                    x0 = origin_coordinates[0]
+                    y0 = origin_coordinates[1]
+                    button_distance = maschine_button_distances[current_button_str]
+                    # button_distance = distance_to_button
+                    theta = grid_sticker_angles[column_num - 1] + 90
+                    x1, y1 = point_pos(x0=x0, y0=y0, d=button_distance, theta=theta)
+                    cv2.line(output, (origin_coordinates[0], origin_coordinates[1]), (x1, y1), 255, 2)
+
+                    arm_circles = sorted([(i[0], i[1], i[2]) for i in circles if arm_min_y <= i[1] <= arm_max_y],
+                                        key=lambda l: l[0])
+                    for (x, y, r) in arm_circles:
                         # draw the circle in the output image, then draw a rectangle
                         # corresponding to the center of the circle
-                        cv2.circle(output, (x, y), r, (0, 255, 0), 4)
-                        cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 128, 255), -1)
-                        # print(str(x) + ',' + str(y) + ': ' + str(image[y,x]))
-                        cv2.putText(output, str(i), (x - 10, y + 40), font, fontScale, color, thickness, cv2.LINE_AA)
-                        circle_coordinates[i] = (x,y)
-                        # x1, y1 = point_pos(x0=x, y0=y, d=100, theta=grid_sticker_angles[i - 1] + 90)
-                        # cv2.line(output, (x, y), (x1, y1), 255, 2)
-                        i += 1
+                        cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 255, 255), -1)
+                    if len(arm_circles) == 4:
+                        arm_l1 = [arm_circles[0][0], arm_circles[0][1]]
+                        arm_l2 = [arm_circles[1][0], arm_circles[1][1]]
+                        arm_r1 = [arm_circles[3][0], arm_circles[3][1]]
+                        arm_r2 = [arm_circles[2][0], arm_circles[2][1]]
+
+                        cv2.line(output, (arm_l1[0], arm_l1[1]), (arm_l2[0], arm_l2[1]), 255, 2)
+                        cv2.line(output, (arm_r1[0], arm_r1[1]), (arm_r2[0], arm_r2[1]), 255, 2)
+
+                        cv2.putText(output, 'L1', (arm_l1[0], arm_l1[1]), font, fontScale, color_arm, thickness,
+                                    cv2.LINE_AA)
+                        cv2.putText(output, 'L2', (arm_l2[0], arm_l2[1]), font, fontScale, color_arm, thickness,
+                                    cv2.LINE_AA)
+                        cv2.putText(output, 'R1', (arm_r1[0], arm_r1[1]), font, fontScale, color_arm, thickness,
+                                    cv2.LINE_AA)
+                        cv2.putText(output, 'R2', (arm_r2[0], arm_r2[1]), font, fontScale, color_arm, thickness,
+                                    cv2.LINE_AA)
+
+                    else:
+                        # print('Cannot find orange arm dot coordinates')
+                        ok = True
+                    # show the output image
+                    cv2.imshow("output", np.hstack([image, output]))
+                    # cv2.waitKey(0)
+            key = cv2.waitKey(30)
+            if key == 105:  # i on keyboard
+                color_buffer += 5
+                print('color_buffer' + str(color_buffer))
+            elif key == 108:  # l on keyboard
+                color_buffer -= 5
+                print('color_buffer' + str(color_buffer))
+            elif key == 106:  # j on keyboard
+                distance_to_button += 1
+                print('distance ' + str(distance_to_button))
+            elif key == 107:  # k on keyboard
+                distance_to_button -= 1
+                print('distance ' + str(distance_to_button))
+            elif key == 116:  # t on keyboard
+                if current_button == len(maschine_buttons) - 1:
+                    current_button = 0
+                else:
+                    current_button += 1
+
                 current_button_str = maschine_buttons[current_button]
                 column_num = maschine_button_columns[current_button_str]
                 origin_coordinates = circle_coordinates[column_num]
-                x0 = origin_coordinates[0]
-                y0 = origin_coordinates[1]
-                button_distance = maschine_button_distances[current_button_str]
-                # button_distance = distance_to_button
-                theta = grid_sticker_angles[column_num - 1] + 90
-                x1, y1 = point_pos(x0=x0, y0=y0, d=button_distance, theta=theta)
-                cv2.line(output, (origin_coordinates[0], origin_coordinates[1]), (x1, y1), 255, 2)
+                print(current_button_str)
+                print(column_num)
+                print(origin_coordinates)
+            elif key >= 0:
+                break
 
-                arm_circles = sorted([(i[0], i[1], i[2]) for i in circles if arm_min_y <= i[1] <= arm_max_y],
-                                     key=lambda l: l[0])
-                for (x, y, r) in arm_circles:
-                    # draw the circle in the output image, then draw a rectangle
-                    # corresponding to the center of the circle
-                    cv2.rectangle(output, (x - 5, y - 5), (x + 5, y + 5), (0, 255, 255), -1)
-                if len(arm_circles) == 4:
-                    arm_l1 = [arm_circles[0][0], arm_circles[0][1]]
-                    arm_l2 = [arm_circles[1][0], arm_circles[1][1]]
-                    arm_r1 = [arm_circles[3][0], arm_circles[3][1]]
-                    arm_r2 = [arm_circles[2][0], arm_circles[2][1]]
-
-                    cv2.line(output, (arm_l1[0], arm_l1[1]), (arm_l2[0], arm_l2[1]), 255, 2)
-                    cv2.line(output, (arm_r1[0], arm_r1[1]), (arm_r2[0], arm_r2[1]), 255, 2)
-
-                    cv2.putText(output, 'L1', (arm_l1[0], arm_l1[1]), font, fontScale, color_arm, thickness,
-                                cv2.LINE_AA)
-                    cv2.putText(output, 'L2', (arm_l2[0], arm_l2[1]), font, fontScale, color_arm, thickness,
-                                cv2.LINE_AA)
-                    cv2.putText(output, 'R1', (arm_r1[0], arm_r1[1]), font, fontScale, color_arm, thickness,
-                                cv2.LINE_AA)
-                    cv2.putText(output, 'R2', (arm_r2[0], arm_r2[1]), font, fontScale, color_arm, thickness,
-                                cv2.LINE_AA)
-
-                else:
-                    # print('Cannot find orange arm dot coordinates')
-                    ok = True
-                # show the output image
-                cv2.imshow("output", np.hstack([image, output]))
-                # cv2.waitKey(0)
-        key = cv2.waitKey(30)
-        if key == 105:  # i on keyboard
-            color_buffer += 5
-            print('color_buffer' + str(color_buffer))
-        elif key == 108:  # l on keyboard
-            color_buffer -= 5
-            print('color_buffer' + str(color_buffer))
-        elif key == 106:  # j on keyboard
-            distance_to_button += 1
-            print('distance ' + str(distance_to_button))
-        elif key == 107:  # k on keyboard
-            distance_to_button -= 1
-            print('distance ' + str(distance_to_button))
-        elif key == 116:  # t on keyboard
-            if current_button == len(maschine_buttons) - 1:
-                current_button = 0
-            else:
-                current_button += 1
-
-            current_button_str = maschine_buttons[current_button]
-            column_num = maschine_button_columns[current_button_str]
-            origin_coordinates = circle_coordinates[column_num]
-            print(current_button_str)
-            print(column_num)
-            print(origin_coordinates)
-        elif key >= 0:
-            break
-
-        i += 1
-        # endregion
+            i += 1
+            # endregion
 
     exit(0)
 
