@@ -190,16 +190,10 @@ class RobotMode:
     REAL = 'real'
     SIM = 'sim'
 
-# initialize Reachy as reachy
-reachy = Reachy(
-    right_arm=parts.RightArm(
-        io='/dev/ttyUSB*',
-        hand='force_gripper',
-    ),
-    left_arm=parts.LeftArm(
-    io='/dev/ttyUSB*',
-    hand='force_gripper')
-)
+# crude way to work around old way to initialize Reachy
+# actual initialization happens in __main__
+# TODO: major refactor to not make Reachy a global variable that happens on startup
+reachy = None
 
 def relax(arm):
     assert arm == 'left' or arm == 'right'
@@ -831,7 +825,7 @@ def main(args, robot):
 if __name__ == "__main__":
     cli_commands = {
         'robot_mode': {
-            'default': RobotMode.REAL,
+            'default': RobotMode.SIM,
             'type': str,
             'help': "Mode to run the robot in. Options: 'SIM' for simulator and 'REAL' for real hardware."
         },
@@ -874,8 +868,19 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     connect_websocket()
-    stiffen(arm='left')
-    stiffen(arm='right')
-    relax(arm='left')
-    relax(arm='right')
+    if args.robot_mode == RobotMode.REAL:
+        if reachy is None:
+            reachy = Reachy(
+                right_arm=parts.RightArm(
+                    io='/dev/ttyUSB*',
+                    hand='force_gripper',
+                ),
+                left_arm=parts.LeftArm(
+                io='/dev/ttyUSB*',
+                hand='force_gripper')
+            )
+        stiffen(arm='left')
+        stiffen(arm='right')
+        relax(arm='left')
+        relax(arm='right')
     main(args, reachy)
