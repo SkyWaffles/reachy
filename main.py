@@ -618,8 +618,9 @@ def main(args, robot):
                 exit(1)
         print("Calibration file found. Loading...")
 
-    camera_matrix_left, camera_matrix_right, map_left_x, map_left_y, map_right_x, map_right_y = init_calibration(
-        calibration_file, image_size)
+        camera_matrix_left, camera_matrix_right, map_left_x, map_left_y, map_right_x, map_right_y = init_calibration(
+            calibration_file, image_size)
+
     i = 0
     while True:
         if robot:
