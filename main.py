@@ -634,6 +634,7 @@ def main(args, robot):
                 print('pressing button in queue: ' + next_item + ', remaining queue items: ' + ', '.join(reachy_build_song_queue))
                 Thread(target=select_pattern, args=([next_item],)).start()
 
+        # region camera handling and computer vision
         # Get a new frame from camera
         retval, frame = cap.read()
         # Extract left and right images from side-by-side
@@ -821,6 +822,7 @@ def main(args, robot):
             break
 
         i += 1
+        # endregion
 
     exit(0)
 
