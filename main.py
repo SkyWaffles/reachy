@@ -608,14 +608,15 @@ def main(args, robot):
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, image_size.width * 2)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, image_size.height)
 
-    calibration_file = args.camera_config_path
-    if args.camera_config_path is None:
-        serial_number = args.camera_id
-        calibration_file = download_calibration_file(serial_number)
-        if calibration_file == "":
-            print("No camera calibration file found. Exiting.")
-            exit(1)
-    print("Calibration file found. Loading...")
+    if args.camera_mode == RobotMode.REAL:
+        calibration_file = args.camera_config_path
+        if args.camera_config_path is None:
+            serial_number = args.camera_id
+            calibration_file = download_calibration_file(serial_number)
+            if calibration_file == "":
+                print("No camera calibration file found. Exiting.")
+                exit(1)
+        print("Calibration file found. Loading...")
 
     camera_matrix_left, camera_matrix_right, map_left_x, map_left_y, map_right_x, map_right_y = init_calibration(
         calibration_file, image_size)
