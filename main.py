@@ -863,7 +863,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     connect_websocket()
-    main(args)
+    stiffen(arm='left')
+    stiffen(arm='right')
     relax(arm='left')
     relax(arm='right')
     main(args)
