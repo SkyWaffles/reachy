@@ -594,13 +594,19 @@ class Instruments(Enum):
 
 IMG_ROOT = './img'
 ICON_PATHS = {
-    Instruments.DRUMS: join(IMG_ROOT, 'vocals.png'),
-    Instruments.BASS: join(IMG_ROOT, 'drums.png'),
+    Instruments.DRUMS: join(IMG_ROOT, 'drums.png'),
+    Instruments.BASS: join(IMG_ROOT, 'bass.png'),
     Instruments.KEYBOARD: join(IMG_ROOT, 'keyboard.png'),
     Instruments.VOCALS: join(IMG_ROOT, 'vocals.png'),
 }
-# TODO: formula to get the right instrument based on button pressed
-# Instruments((num-1)//4+1).name
+def get_instrument_number(num):
+    """
+    formula to get the right instrument based on button pressed
+    """
+    if num < 1 or num > 16:
+        raise ValueError("No instruments found at number {num}")
+
+    return (num-1) // 4 + 1
 # endregion
 
 def main(args, robot):
@@ -640,29 +646,34 @@ def main(args, robot):
     while True:
         # region visualization of incoming tasks
         # TODO: ask Tom about play vs build song modes
-        img = cv2.imread(ICON_PATHS[Instruments.VOCALS])
-        window_name = 'image'
-        # Write some Text
+        queue = reachy_play_song_queue if len(reachy_play_song_queue) > 0 else reachy_build_song_queue
+        
+        if len(queue) > 0:
+            current_instrument = Instruments(get_instrument_number(queue[0]))
+            img = cv2.imread(ICON_PATHS[current_instrument])
+            window_name = 'Current Instrument'
 
-        font                   = cv2.FONT_HERSHEY_SIMPLEX
-        bottomLeftCornerOfText = (10,500)
-        fontScale              = 1
-        fontColor              = (1,255,255)
-        thickness              = 1
-        lineType               = 2
+            # Write text over image
+            font                   = cv2.FONT_HERSHEY_SIMPLEX
+            bottomLeftCornerOfText = (10, 30)
+            fontScale              = .75
+            fontColor              = (0, 0, 0)
+            thickness              = 2
+            lineType               = 2
 
-        cv2.putText(img,'Hello World!', 
-            bottomLeftCornerOfText, 
-            font, 
-            fontScale,
-            fontColor,
-            thickness,
-            lineType)
+            text = f'{current_mode}: {current_instrument.name}'
+            cv2.putText(img, text, 
+                bottomLeftCornerOfText, 
+                font, 
+                fontScale,
+                fontColor,
+                thickness,
+                lineType)
 
-        #Display the image
-        cv2.imshow(window_name, img)
+            # Display the image
+            cv2.imshow(window_name, img)
 
-        key = cv2.waitKey(0)
+            key = cv2.waitKey(0)
         # endregion
 
         if robot:
@@ -880,7 +891,7 @@ if __name__ == "__main__":
             'help': "Mode to run the robot in. Options: 'SIM' for simulator and 'REAL' for real hardware."
         },
         'camera_mode': {
-            'default': RobotMode.SIM,
+            'default': RobotMode.REAL,
             'type': str,
             'help': "Mode to run the camera in. Options: Use 'SIM' when no camera is available " \
                 "(which currently just ignorse camera part of code, but might add in preloaded stream someday)" \
