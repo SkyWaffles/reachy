@@ -38,7 +38,6 @@ from enum import Enum
 import websocket
 import json
 import threading
-from math import sin, cos, radians, pi
 from datetime import datetime
 from threading import Thread
 from reachy import Reachy, parts
