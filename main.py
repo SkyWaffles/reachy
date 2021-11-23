@@ -193,9 +193,10 @@ class RobotMode:
 
 # crude way to work around old way to initialize Reachy
 # actual initialization happens in __main__
-# TODO: major refactor to not make Reachy a global variable that happens on startup
+# TODO: nice to have: refactor so that Reachy is not a global variable that happens on startup
 reachy = None
 
+# region Robot methods
 def relax(arm):
     assert arm == 'left' or arm == 'right'
     if arm == 'left':
@@ -384,8 +385,9 @@ def change_mode(new_mode):
 
     current_mode = new_mode
     reset_reachy()
+# endregion
 
-
+# region Websocket methods
 def change_genre(new_genre):
     global current_genre
 
@@ -444,8 +446,9 @@ def on_close(ws, close_status_code, close_msg):
 
 def on_open(ws):
     print('### websocket opened ###')
+# endregion
 
-
+# region Camera methods
 def point_pos(x0, y0, d, theta):
     theta_rad = pi / 2 - radians(theta)
     return int(round(x0 + d * cos(theta_rad))), int(round(y0 + d * sin(theta_rad)))
@@ -577,11 +580,12 @@ def init_calibration(calibration_file, image_size):
 
     return cameraMatrix_left, cameraMatrix_right, map_left_x, map_left_y, map_right_x, map_right_y
 
-
 class Resolution:
     width = 1280
     height = 720
+# endregion
 
+# region Instrument visualizations
 class Instruments(Enum):
     DRUMS = 1  # 1-4
     BASS = 2  # 5-8
@@ -597,6 +601,7 @@ ICON_PATHS = {
 }
 # TODO: formula to get the right instrument based on button pressed
 # Instruments((num-1)//4+1).name
+# endregion
 
 def main(args, robot):
     global color_buffer
