@@ -33,6 +33,8 @@ import sys
 import cv2
 import wget
 from math import sin, cos, radians, pi
+from os.path import join 
+from enum import Enum
 import websocket
 import json
 import threading
@@ -581,6 +583,21 @@ class Resolution:
     width = 1280
     height = 720
 
+class Instruments(Enum):
+    DRUMS = 1  # 1-4
+    BASS = 2  # 5-8
+    KEYBOARD = 3  # 9-12
+    VOCALS = 4  # 13-16
+
+IMG_ROOT = './img'
+ICON_PATHS = {
+    Instruments.DRUMS: join(IMG_ROOT, 'vocals.png'),
+    Instruments.BASS: join(IMG_ROOT, 'drums.png'),
+    Instruments.KEYBOARD: join(IMG_ROOT, 'keyboard.png'),
+    Instruments.VOCALS: join(IMG_ROOT, 'vocals.png'),
+}
+# TODO: formula to get the right instrument based on button pressed
+# Instruments((num-1)//4+1).name
 
 def main(args, robot):
     global color_buffer
