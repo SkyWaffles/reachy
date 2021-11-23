@@ -634,6 +634,33 @@ def main(args, robot):
 
     i = 0
     while True:
+        # region visualization of incoming tasks
+        # TODO: ask Tom about play vs build song modes
+        img = cv2.imread(ICON_PATHS[Instruments.VOCALS])
+        window_name = 'image'
+        # Write some Text
+
+        font                   = cv2.FONT_HERSHEY_SIMPLEX
+        bottomLeftCornerOfText = (10,500)
+        fontScale              = 1
+        fontColor              = (1,255,255)
+        thickness              = 1
+        lineType               = 2
+
+        cv2.putText(img,'Hello World!', 
+            bottomLeftCornerOfText, 
+            font, 
+            fontScale,
+            fontColor,
+            thickness,
+            lineType)
+
+        #Display the image
+        cv2.imshow(window_name, img)
+
+        key = cv2.waitKey(0)
+        # endregion
+
         if robot:
             # check queue
             if not reachy_moving and current_mode == 'play' and len(reachy_play_song_queue) > 0:
