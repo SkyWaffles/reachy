@@ -603,6 +603,7 @@ def get_instrument_number(num):
     """
     formula to get the right instrument based on button pressed
     """
+    num = int(num)
     if num < 1 or num > 16:
         raise ValueError("No instruments found at number {num}")
 
@@ -649,7 +650,8 @@ def main(args, robot):
         queue = reachy_play_song_queue if len(reachy_play_song_queue) > 0 else reachy_build_song_queue
         
         if len(queue) > 0:
-            current_instrument = Instruments(get_instrument_number(queue[0]))
+            button_num = queue[0].split("_")[-1]
+            current_instrument = Instruments(get_instrument_number(button_num))
             img = cv2.imread(ICON_PATHS[current_instrument])
             window_name = 'Current Instrument'
 
@@ -672,8 +674,6 @@ def main(args, robot):
 
             # Display the image
             cv2.imshow(window_name, img)
-
-            key = cv2.waitKey(0)
         # endregion
 
         if robot:
