@@ -648,12 +648,12 @@ def main(args, robot):
         # region visualization of incoming tasks
         # TODO: ask Tom about play vs build song modes
         queue = reachy_play_song_queue if len(reachy_play_song_queue) > 0 else reachy_build_song_queue
-        
+
         if len(queue) > 0:
             button_num = queue[0].split("_")[-1]
             current_instrument = Instruments(get_instrument_number(button_num))
             img = cv2.imread(ICON_PATHS[current_instrument])
-            window_name = 'Current Instrument'
+            window_name = 'Instrumentation'
 
             # Write text over image
             font                   = cv2.FONT_HERSHEY_SIMPLEX
@@ -663,7 +663,7 @@ def main(args, robot):
             thickness              = 2
             lineType               = 2
 
-            text = f'{current_mode}: {current_instrument.name}'
+            text = f'{current_mode}ing: {current_instrument.name}'
             cv2.putText(img, text, 
                 bottomLeftCornerOfText, 
                 font, 
@@ -671,6 +671,21 @@ def main(args, robot):
                 fontColor,
                 thickness,
                 lineType)
+            
+            if len(queue) > 1:
+                # then there in something that's next in the queue
+                next_button_num = queue[1].split("_")[-1]
+                next_instrument = Instruments(get_instrument_number(next_button_num))
+                text = f'next: {next_instrument.name}'
+                bottomLeftCornerOfText = (10, 290)
+            
+                cv2.putText(img, text, 
+                    bottomLeftCornerOfText, 
+                    font, 
+                    fontScale,
+                    fontColor,
+                    thickness,
+                    lineType)
 
             # Display the image
             cv2.imshow(window_name, img)
