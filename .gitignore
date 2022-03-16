@@ -3,3 +3,13 @@
 
 # Jupyter Nodebook files
 *.ipynb
+
+# ignore image folders
+img*/
+
+# ignore media files
+*.avi
+*.jpg
+
+# ignore archival files
+*.zip
