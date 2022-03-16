@@ -5,7 +5,7 @@ import threading
 
 
 def get_timestamp():
-    return datetime.datetime.now().strftim
+    return datetime.datetime.now().strftime("%Y_%m_%d_%H_%M_%S")
 
 
 class Resolution:
@@ -23,12 +23,9 @@ class Resolution:
     def __init__(self, *args: str) -> None:
         if len(args) == 1:
             # assume progressive scan value has been passed in
-            if isinstance(args, str):
-                progressive_scan = args[0]
-                self.width = self.opencv_dimensions[progressive_scan](0)
-                self.height = self.opencv_dimensions[progressive_scan](1)
-            else:
-                raise ValueError("Single argument assumes a string, progessive scan value (like '240p')")
+            progressive_scan = args[0]
+            self.width = self.opencv_dimensions[progressive_scan][0]
+            self.height = self.opencv_dimensions[progressive_scan][1]
         elif len(args) == 2:
             # assume width and height have been passed in
             self.width = args[0]
@@ -36,7 +33,10 @@ class Resolution:
         elif len(args) > 2:
             raise ValueError("Instantiating Resolution: Too many arguments")
  
-    def __leq__(self, other: 'Resolution'):
+    def __le__(self, other: 'Resolution'):
+        if other is None:
+            return False
+
         if self.width <= other.width and self.height <= other.height:
             # this resolution clearly fits inside the other
             return True
@@ -50,7 +50,7 @@ class Resolution:
 
 class CameraSpecs:
     # handle resolutions that are too high for USB port to handle
-    max_resolution = Resolution(320, 240)
+    max_resolution = Resolution(320, 320)
     # OpenCV only allows certain resolutions when recording
     max_recording_resolution = Resolution("240p")
     # Video Encoding, might require additional installs (codecs: http://www.fourcc.org/codecs.php)
@@ -65,22 +65,17 @@ class CameraSpecs:
         fourcc: int = None,
         fps: float = None) -> None:
 
-        # if width and width > self.max_resolution.width:
-        #     print(ValueError(f"Video width resolution can't be greater than {self.max_resolution.width}"))
-        #     width = None
-        # self.width = width if width else Resolution.width
-        # if height and height > Resolution.height:
-        #     print(ValueError(f"Video height resolution can't be greater than {Resolution.height}"))
-        #     height = None
+        self.enable_recording = enable_recording
+        if self.enable_recording and (not resolution <= self.max_recording_resolution):
+            print(ValueError(f"Recording in OpenCV is only allowed at certain resolutions. The current {resolution} is not one of them."))
+            print(f"changing resolution to max allowed recording resolution {self.max_recording_resolution}...")
+            resolution = self.max_recording_resolution
+        elif not (resolution <= self.max_resolution):
+            print(ValueError(f"Video resolution must be within {self.max_resolution}; they're currently set to {resolution}."))
+            print(f"changing resolution to max allowed resolution {self.max_resolution}...")
+            resolution = self.max_resolution
 
-        if resolution:
-            if resolution <= self.max_resolution:
-                raise ValueError(f"Video resolution must be within {self.max_resolution}; they're currently set to {self.resolution}")
-            
-            if enable_recording and self.max_recording_resolution < resolution:  # TODO, check!
-                raise ValueError(f"")
-
-        self.resolution = resolution if resolution else self.max_resolution
+        self.resolution = resolution
         self.fourcc = fourcc if fourcc else self.video_type['avi']
         self.fps = fps if fps else 24.0
 
@@ -99,8 +94,8 @@ class CameraThread(threading.Thread):
 def CameraView(view_name, camera_id, specs):
     cv2.namedWindow(view_name)
     camera = cv2.VideoCapture(camera_id)
-    camera.set(cv2.CAP_PROP_FRAME_WIDTH, specs.width)
-    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, specs.height)
+    camera.set(cv2.CAP_PROP_FRAME_WIDTH, specs.resolution.width)
+    camera.set(cv2.CAP_PROP_FRAME_HEIGHT, specs.resolution.height)
     if camera.isOpened():  # try to get the first frame
         rval, frame = camera.read()
     else:
@@ -121,12 +116,12 @@ def CameraView(view_name, camera_id, specs):
             print(f"Attempting to write frame to {img_name}...")
             cv2.imwrite(img_name, frame)
             print(f"{img_name} saved successfully")
-        elif key == 32:  # space-bar: toggle stream recording
+        elif key == 32 and specs.enable_recording:  # space-bar: toggle stream recording
             if not is_recording:
                 # transition to recording
                 stream_name = f"{timestamp}_cam_{camera_id}.avi"
                 print(f"Started recording to {stream_name}...")
-                recording = cv2.VideoWriter(stream_name, specs.fourcc, specs.fps, (specs.width, specs.height))
+                recording = cv2.VideoWriter(stream_name, specs.fourcc, specs.fps, (specs.resolution.width, specs.resolution.height))
                 is_recording = True
             else:
                 # stop recording
@@ -141,10 +136,11 @@ def CameraView(view_name, camera_id, specs):
     camera.release()
     cv2.destroyWindow(view_name)
 
-# Create two camera threads
-spec_1 = CameraSpecs(enable_recording=True, resolution=)
-spec_2 = CameraSpecs(enable_recording=True)
+# create camera threads
+res = Resolution('240p')
+spec_1 = CameraSpecs(enable_recording=False, resolution=res)
 thread1 = CameraThread("Camera 1", 1, spec_1)
-thread2 = CameraThread("Camera 2", 2, spec_2)
 thread1.start()
+spec_2 = CameraSpecs(enable_recording=True, resolution=res)
+thread2 = CameraThread("Camera 2", 2, spec_2)
 thread2.start()
