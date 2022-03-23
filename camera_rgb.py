@@ -1,4 +1,3 @@
-import re
 import cv2
 import datetime
 import threading
@@ -131,7 +130,6 @@ def CameraView(view_name, camera_id, specs):
         
         if is_recording:
             recording.write(frame)
-
 
     camera.release()
     cv2.destroyWindow(view_name)
