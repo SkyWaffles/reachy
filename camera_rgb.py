@@ -32,6 +32,9 @@ class Resolution:
         elif len(args) > 2:
             raise ValueError("Instantiating Resolution: Too many arguments")
  
+    def get(self):
+        return (self.width, self.height)
+
     def __le__(self, other: 'Resolution'):
         if other is None:
             return False
@@ -134,11 +137,12 @@ def CameraView(view_name, camera_id, specs):
     camera.release()
     cv2.destroyWindow(view_name)
 
-# create camera threads
-res = Resolution('240p')
-spec_1 = CameraSpecs(enable_recording=False, resolution=res)
-thread1 = CameraThread("Camera 1", 1, spec_1)
-thread1.start()
-spec_2 = CameraSpecs(enable_recording=True, resolution=res)
-thread2 = CameraThread("Camera 2", 2, spec_2)
-thread2.start()
+if __name__=='__main__':
+    # create camera threads
+    res = Resolution('240p')
+    spec_1 = CameraSpecs(enable_recording=False, resolution=res)
+    thread1 = CameraThread("Camera 1", 1, spec_1)
+    thread1.start()
+    spec_2 = CameraSpecs(enable_recording=True, resolution=res)
+    thread2 = CameraThread("Camera 2", 2, spec_2)
+    thread2.start()

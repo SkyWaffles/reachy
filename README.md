@@ -1,6 +1,6 @@
 docs: https://pollen-robotics.github.io/reachy-2019-docs/docs/program-your-robot/control-the-arm/#arm-coordinate-system \
 https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot more than the other link)
-## Quickstart
+## Quickstart (Accenture Office)
 1. Connect to Wifi hotspot that's linked with Reachy:
     ```yml
     Hotspot
