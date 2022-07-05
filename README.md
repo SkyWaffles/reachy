@@ -25,6 +25,22 @@ https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot m
     http://192.168.0.2:8888/?token=<very long token generated from server startup>
     ```
 
+# Reachy Cameras
+The [Reachy 2019 docs](https://pollen-robotics.github.io/reachy-2019-docs/docs/technical-specifications/head/) mentions that Reachy uses "2 [Raspberry Pi cameras](https://www.raspberrypi.com/documentation/accessories/camera.html) cameras associated with 2 optical lenses (one macro and one wide angle)":
+- Sony IMX219 8-megapixel sensor (specs according to [seed studio.com](https://www.seeedstudio.com/Raspberry-Pi-High-Quality-Cam-p-4463.html)):
+    - Resolution: 3280 × 2464 pixels
+    - Sensor image area: 3.68 x 2.78 mm (4.6 mm diagonal)
+    - Horizontal Field of View: 62.2°
+    - Vertical Field of View: 48.8°
+    - Focal Length: 3.04mm
+- Sony IMX477 12.3 megapixel sensor (specs according to [kksb](https://kksb-cases.com/collections/raspberry-pi/products/imx477-160-12-3mp-camera-160-fov)):
+    - Resolution: 12.3MP | 4056 x 3040p
+    - Pixel Size: 1.55 µm (Horizontal) x 1.55 µm (Vertical)
+    - CMOS Diagonal Length: 7.9mm
+    - Back Focal Length (BFL): 5.52
+    - Aperture (F): 2.2
+    - Field of View (FoV): 160° (D) | 118° (H) | 87° 9V)
+
 # Using Reachy Simulator
 Online Simulator: https://pollen-robotics.github.io/reachy-simulator/
 Offline Simulator with Unity (Github): https://github.com/pollen-robotics/reachy-unity-package
