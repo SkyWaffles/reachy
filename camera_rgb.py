@@ -59,6 +59,8 @@ if __name__=='__main__':
     # Open both cameras
     cam_left.start()
     cam_right.start()
+
+    is_recording = False
     while(cam_right.is_on() and cam_left.is_on()):
         timestamp = get_timestamp()
 
@@ -82,6 +84,28 @@ if __name__=='__main__':
             print(f"Attempting to write frame to {img_name}...")
             cv2.imwrite(img_name, frame_right)
             print(f"{img_name} saved successfully")
+        elif key == 32:  # space-bar: toggle stream recording_left
+            if not is_recording:
+                # transition to recording_left
+                stream_name = f"{timestamp}_cam_{cam_left.id}.avi"
+                print(f"Started recording_left to {stream_name}...")
+                recording_left = cv2.VideoWriter(stream_name, cam_left.specs.fourcc, cam_left.specs.fps, (cam_left.specs.resolution.width, cam_left.specs.resolution.height))
+                is_recording = True
+
+                stream_name = f"{timestamp}_cam_{cam_right.id}.avi"
+                print(f"Started recording_right to {stream_name}...")
+                recording_right = cv2.VideoWriter(stream_name, cam_right.specs.fourcc, cam_right.specs.fps, (cam_right.specs.resolution.width, cam_right.specs.resolution.height))
+                is_recording = True
+            else:
+                # stop recording_left
+                print(f"Stopped recording_left")
+                recording_left.release()
+                recording_right.release()
+                is_recording = False
+        
+        if is_recording:
+            recording_left.write(frame_left)
+            recording_right.write(frame_right)
 
 
     # Release and destroy all windows before termination
