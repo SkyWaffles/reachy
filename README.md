@@ -1,7 +1,7 @@
 docs: https://pollen-robotics.github.io/reachy-2019-docs/docs/program-your-robot/control-the-arm/#arm-coordinate-system \
 https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot more than the other link)
-## Quickstart
-### Setting up Reachy Hardware Connection
+# Quickstart
+## Setting up Reachy Hardware Connection
 1. Connect to Wifi hotspot that's linked with Reachy:
     ```yml
     Hotspot
@@ -13,14 +13,14 @@ https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot m
     command: ssh pi@192.168.0.2
     pw: reachy
     ```
-#### Option 1: Running a Jupyter Notebok with onboard Reachy hardware
+### Option 1: Running a Jupyter Notebok with onboard Reachy hardware
 ```bash
 # starting the Jupyter server
 $ jupyter notebook --ip 0.0.0.0
 # IP with token to access notebook from local machine without using VNC
 http://192.168.0.2:8888/?token=<very long token generated from server startup>
 ```
-#### Option 2: Running a Python script for Zed campera with real Reachy
+### Option 2: Running a Python script for Zed campera with real Reachy
 ```bash
 cd zed-opencv-native/python/
 python3 zed_opencv_native.py "15618"
