@@ -33,6 +33,17 @@ Offline Simulator with Unity (Github): https://github.com/pollen-robotics/reachy
 
 When using the Online Simulator, you have to first start up the simulator call in your code, then hit the "Connect" button in the online Simulator (Webgl) window.
 
+# Computer Vision
+Note: If on Windows, need to add `cv2.CAP_DSHOW` as an argument to cv2.VideoCapture() for video to stream at a reasonable size without lag. On Linux, need to remove that argument, else it won't work
+## Quickstart
+1. Calibration (camera_calibration_stereo.py)
+1. camera_stereovision.py
+
+ball videos:
+2022_03_31_09_48_45_cam_0.avi
+2022_03_31_09_48_45_cam_1.avi
+calib parameters: stereoMap_og.xml
+
 ## Reachy Cameras
 The [Reachy 2019 docs](https://pollen-robotics.github.io/reachy-2019-docs/docs/technical-specifications/head/) mentions that Reachy uses "2 [Raspberry Pi cameras](https://www.raspberrypi.com/documentation/accessories/camera.html) cameras associated with 2 optical lenses (one macro and one wide angle)":
 - Sony IMX219 8-megapixel sensor (specs according to [seed studio.com](https://www.seeedstudio.com/Raspberry-Pi-High-Quality-Cam-p-4463.html)):
@@ -49,7 +60,7 @@ The [Reachy 2019 docs](https://pollen-robotics.github.io/reachy-2019-docs/docs/t
     - Aperture (F): 2.2
     - Field of View (FoV): 160° (D) | 118° (H) | 87° 9V)
 
-## Arm Positions
+# Arm Positions
 ```python
 # code to determine position
 current_position = [m.present_position for m in reachy.right_arm.motors]
