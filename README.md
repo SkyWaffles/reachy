@@ -1,6 +1,7 @@
 docs: https://pollen-robotics.github.io/reachy-2019-docs/docs/program-your-robot/control-the-arm/#arm-coordinate-system \
 https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot more than the other link)
-## Quickstart (Accenture Office)
+## Quickstart
+### Setting up Reachy Hardware Connection
 1. Connect to Wifi hotspot that's linked with Reachy:
     ```yml
     Hotspot
@@ -12,20 +13,27 @@ https://docs.pollen-robotics.com/sdk/first-moves/arm/ (seems to be wrong a lot m
     command: ssh pi@192.168.0.2
     pw: reachy
     ```
-1. Running a Python script with real Reachy:
-    ```bash
-    cd zed-opencv-native/python/
-    python3 zed_opencv_native.py "15618"
-    ```
-1. Running a Jupyter Notebok with real Reachy:
-    ```bash
-    # starting the Jupyter server
-    $ jupyter notebook --ip 0.0.0.0
-    # IP with token to access notebook from local machine without using VNC
-    http://192.168.0.2:8888/?token=<very long token generated from server startup>
-    ```
+#### Option 1: Running a Jupyter Notebok with onboard Reachy hardware
+```bash
+# starting the Jupyter server
+$ jupyter notebook --ip 0.0.0.0
+# IP with token to access notebook from local machine without using VNC
+http://192.168.0.2:8888/?token=<very long token generated from server startup>
+```
+#### Option 2: Running a Python script for Zed campera with real Reachy
+```bash
+cd zed-opencv-native/python/
+python3 zed_opencv_native.py "15618"
+```
 
-# Reachy Cameras
+### Using Reachy Simulator
+Online Simulator: https://pollen-robotics.github.io/reachy-simulator/
+
+Offline Simulator with Unity (Github): https://github.com/pollen-robotics/reachy-unity-package
+
+When using the Online Simulator, you have to first start up the simulator call in your code, then hit the "Connect" button in the online Simulator (Webgl) window.
+
+## Reachy Cameras
 The [Reachy 2019 docs](https://pollen-robotics.github.io/reachy-2019-docs/docs/technical-specifications/head/) mentions that Reachy uses "2 [Raspberry Pi cameras](https://www.raspberrypi.com/documentation/accessories/camera.html) cameras associated with 2 optical lenses (one macro and one wide angle)":
 - Sony IMX219 8-megapixel sensor (specs according to [seed studio.com](https://www.seeedstudio.com/Raspberry-Pi-High-Quality-Cam-p-4463.html)):
     - Resolution: 3280 × 2464 pixels
@@ -40,12 +48,6 @@ The [Reachy 2019 docs](https://pollen-robotics.github.io/reachy-2019-docs/docs/t
     - Back Focal Length (BFL): 5.52
     - Aperture (F): 2.2
     - Field of View (FoV): 160° (D) | 118° (H) | 87° 9V)
-
-# Using Reachy Simulator
-Online Simulator: https://pollen-robotics.github.io/reachy-simulator/
-Offline Simulator with Unity (Github): https://github.com/pollen-robotics/reachy-unity-package
-
-When using the Online Simulator, you have to first start up the simulator call in your code, then hit the "Connect" button in the online Sim (Webgl) window.
 
 ## Arm Positions
 ```python
